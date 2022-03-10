@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="no">
+<head>
+    <title> Huskeliste </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<body>
+
+<div id="hoved">
+    <h1>Huskeliste</h1>
+    <input type="text"> <button class="ok">Legg til</button>
+    <div id="liste"></div>
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyADkOLw8ih9zBY_MOwwcnl9CSasXFP9ggE",
+        authDomain: "huskeliste-49a6d.firebaseapp.com",
+        projectId: "huskeliste-49a6d",
+        storageBucket: "huskeliste-49a6d.appspot.com",
+        messagingSenderId: "300768086347",
+        appId: "1:300768086347:web:28189e868ed01418a080ce"
+
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    let db = firebase.firestore();
+    let ulEl = document.querySelector("ul")
+
+    let listeEl = document.querySelector("#liste");
+    let inputEl = document.querySelector("input");
+    let knappEl = document.querySelector("button");
+
+
+    knappEl.addEventListener("click", leggTilHuskepunkt);
+
+
+    db.collection("huskeliste").get().then((snapshot) => {
+
+        let dokumenter = snapshot.docs;
+
+
+        for (let i = 0; i < dokumenter.length; i++) {
+            visHuskeElement(dokumenter[i]);
+        }
+    });
+
+
+    function visHuskeElement(dokument) {
+
+        let divEl = document.createElement("div");
+        divEl.setAttribute("class", "listediv");
+
+
+        let divEl2 = document.createElement("div");
+        divEl2.setAttribute("data-id", dokument.id);
+        divEl2.innerHTML = dokument.data().huskeliste;
+
+
+        if (dokument.data().ferdig) {
+            divEl2.setAttribute("class", "ferdig");
+        }
+
+
+        divEl2.addEventListener("click", endreTilstand);
+
+
+        divEl.appendChild(divEl2);
+
+
+        let slettKnappEl = document.createElement("button");
+        slettKnappEl.setAttribute("class", "avbryt");
+        slettKnappEl.innerHTML = "Slett";
+        slettKnappEl.setAttribute("data-id", dokument.id);
+        slettKnappEl.addEventListener("click", slettHuskepunkt);
+
+
+        divEl.appendChild(slettKnappEl);
+
+
+        listeEl.appendChild(divEl);
+    }
+
+
+    function leggTilHuskepunkt() {
+
+        db.collection("huskeliste").add({
+            huskeliste: inputEl.value,
+            ferdig: false
+        });
+    }
+
+
+    function endreTilstand(e) {
+
+        let id = e.target.getAttribute("data-id");
+
+
+        db.collection("huskeliste").doc(id).get().then(doc => {
+            let status = doc.data().ferdig;
+
+
+            status = !status;
+
+            db.collection("huskeliste").doc(id).update({
+                ferdig: status
+            });
+        });
+    }
+
+
+    function slettHuskepunkt(e) {
+
+
+
+        let id = e.target.getAttribute("data-id");
+
+
+        db.collection("huskeliste").doc(id).delete();
+    }
+
+
+    db.collection("huskeliste").onSnapshot(snapshot => {
+
+        oppdater();
+    });
+    function oppdater() {
+
+        db.collection("huskeliste").orderBy("ferdig").get().then((snapshot) => {
+
+            let dokumenter = snapshot.docs;
+
+
+            listeEl.innerHTML = "";
+
+
+            for (let i = 0; i < dokumenter.length; i++) {
+                visHuskeElement(dokumenter[i]);
+            }
+        })
+    }
+
+</script>
+
+</body>
+</html>
