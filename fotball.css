@@ -1,3 +1,5 @@
+
+
 h1{
     font-family: arial, sans-serif;
     color: #01739F;
@@ -52,14 +54,15 @@ body, html {
     font-weight: bold;
     border: 3px solid;
     position: absolute;
-    top: 10%;
+    height: 250px;
+    top: 5%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 2;
+    z-index: 1;
     width: 80%;
     padding: 20px;
     text-align: center;
-    top: 45%;
+    top: 35%;
     left:50%;
 }
 #boks2{
@@ -69,13 +72,16 @@ body, html {
     font-weight: bold;
     border: 3px solid;
     position: absolute;
-    top: 90%;
-    left: 30%;
+    height: 240px;
+    top: 10%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 2;
-    width: 40%;
-    padding: 50px;
-    text-align: center;
+    z-index: 1;
+    width: 30%;
+    padding: 20px;
+    text-align: left;
+    top: 80%;
+    left:33%;
 }
 .nav-ul {
     list-style-type: none;
